@@ -50,6 +50,4 @@ WORKDIR /opt/app-root/src
 ENV JUPYTER_PRELOAD_REPOS="https://github.com/IntelAI/oneAPI-samples"
 ENV REPO_BRANCH="main"
 
-COPY --chown=1001:0 test /opt/app-root/test
-
 ENTRYPOINT ["bash", "-c", "/opt/app-root/builder/run"]
