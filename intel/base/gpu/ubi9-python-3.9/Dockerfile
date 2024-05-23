@@ -14,7 +14,14 @@ LABEL name="odh-notebook-intel-base-gpu-ubi9-python-3.9" \
 USER 0
 WORKDIR /opt/app-root/src
 
+<<<<<<< HEAD
 RUN dnf install -y 'dnf-command(config-manager)' && \
+=======
+RUN . /etc/os-release && \
+    #TODO: Remove explicit declaration of VERSION_ID once available on version 9.4
+    VERSION_ID=9.3 && \
+    dnf install -y 'dnf-command(config-manager)' && \
+>>>>>>> origin-upstream/main
     dnf config-manager --add-repo \
         https://repositories.intel.com/gpu/rhel/9.3/lts/2350/unified/intel-gpu-9.3.repo  && \
     dnf install -y \
