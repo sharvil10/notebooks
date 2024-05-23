@@ -41,7 +41,7 @@ define build_image
 		$(eval BUILD_ARGS := --build-arg BASE_IMAGE=$(BASE_IMAGE_NAME)),
 		$(eval BUILD_ARGS :=)
 	)
-	$(CONTAINER_ENGINE) build --no-cache  -t $(IMAGE_NAME) $(BUILD_ARGS) $(2)
+	$(CONTAINER_ENGINE) build -t $(IMAGE_NAME) $(BUILD_ARGS) $(2)
 endef
 
 # Push function for the notebok image:
@@ -49,7 +49,7 @@ endef
 define push_image
 	$(eval IMAGE_NAME := $(IMAGE_REGISTRY):$(subst /,-,$(1))-$(IMAGE_TAG))
 	$(info # Pushing $(IMAGE_NAME) image...)
-	$(CONTAINER_ENGINE) push $(IMAGE_NAME)
+	# $(CONTAINER_ENGINE) push $(IMAGE_NAME)
 endef
 
 # Build and push the notebook images:
@@ -222,7 +222,7 @@ intel-runtime-tensorflow-ubi9-python-3.9: intel-base-gpu-ubi9-python-3.9
 
 # Build and push jupyter-intel-tensorflow-ubi9-python-3.9 image to the registry
 .PHONY: jupyter-intel-tensorflow-ubi9-python-3.9
-jupyter-intel-tensorflow-ubi9-python-3.9: intel-runtime-tensorflow-ubi9-python-3.9
+jupyter-intel-tensorflow-ubi9-python-3.9: intel-base-gpu-ubi9-python-3.9
 	$(call image,$@,jupyter/intel/tensorflow/ubi9-python-3.9,$<)
 
 # Build and push intel-runtime-pytorch-ubi9-python-3.9 image to the registry
@@ -232,7 +232,7 @@ intel-runtime-pytorch-ubi9-python-3.9: intel-base-gpu-ubi9-python-3.9
 
 # Build and push jupyter-intel-pytorch-ubi9-python-3.9 image to the registry
 .PHONY: jupyter-intel-pytorch-ubi9-python-3.9
-jupyter-intel-pytorch-ubi9-python-3.9: intel-runtime-pytorch-ubi9-python-3.9
+jupyter-intel-pytorch-ubi9-python-3.9: intel-base-gpu-ubi9-python-3.9
 	$(call image,$@,jupyter/intel/pytorch/ubi9-python-3.9,$<)
 
 # Build and push intel-runtime-ml-ubi9-python-3.9 image to the registry
@@ -242,7 +242,7 @@ intel-runtime-ml-ubi9-python-3.9: base-ubi9-python-3.9
 
 # Build and push jupyter-intel-ml-ubi9-python-3.9 image to the registry
 .PHONY: jupyter-intel-ml-ubi9-python-3.9
-jupyter-intel-ml-ubi9-python-3.9: intel-runtime-ml-ubi9-python-3.9
+jupyter-intel-ml-ubi9-python-3.9: base-ubi9-python-3.9
 	$(call image,$@,jupyter/intel/ml/ubi9-python-3.9,$<)
 
 ####################################### Buildchain for Python 3.9 using C9S #######################################

@@ -11,6 +11,21 @@ LABEL name="odh-notebook-jupyter-intel-pytorch-ubi9-python-3.9" \
     io.openshift.build.source-location="https://github.com/opendatahub-io/notebooks/tree/main/jupyter/intel/pytorch/ubi9-python-3.9" \
     io.openshift.build.image="quay.io/opendatahub/workbench-images:jupyter-intel-pytorch-ubi9-python-3.9"
 
+USER root
+
+ARG ONEAPI_VERSION=2024.0
+COPY oneAPI.repo /etc/yum.repos.d/oneAPI.repo
+
+RUN dnf update -y && \
+    dnf install -y intel-oneapi-compiler-dpcpp-cpp-runtime-${ONEAPI_VERSION} \
+        intel-oneapi-mkl-${ONEAPI_VERSION} \
+        intel-oneapi-dnnl-${ONEAPI_VERSION} && \
+    dnf clean all -y && \
+    rm -rf /var/cache/dnf/* && \
+    rm /etc/yum.repos.d/oneAPI.repo
+
+USER 1001
+
 WORKDIR /opt/app-root/bin
 
 # Install Python packages and Jupyterlab extensions from Pipfile.lock
@@ -23,7 +38,9 @@ RUN echo "Installing softwares and packages" && \
     jupyter labextension disable "@jupyterlab/apputils-extension:announcements" && \
     chmod -R g+w /opt/app-root/lib/python3.9/site-packages && \
     fix-permissions /opt/app-root -P
-    
+
+ENV CPU_ENV=/opt/app-root-cpu
+ENV GPU_ENV=/opt/app-root
 
 #Replacing kernel manually with oneapi variable setting script
 COPY --chown=1001:0 start-kernel /opt/app-root/bin/start-kernel
@@ -35,8 +52,12 @@ COPY --chown=1001:0 utils /opt/app-root/bin/utils
 #CPU env
 COPY --chown=1001:0 Pipfile.lock.cpu ${CPU_ENV}/Pipfile.lock
 
-WORKDIR ${CPU_ENV} 
-RUN source ${CPU_ENV}/bin/activate && \
+WORKDIR ${CPU_ENV}
+
+RUN python3.9 -m venv ${CPU_ENV} && \
+    chown -R 1001:0 ${CPU_ENV} && \
+    source ${CPU_ENV}/bin/activate && \
+    pip install --no-cache-dir -U "micropipenv[toml]" && \
     micropipenv install && \
     rm -f ./Pipfile.lock && \
     python -m ipykernel install --prefix=/opt/app-root --name 'pytorch-cpu' --display-name='pytorch-cpu' && \
@@ -52,4 +73,5 @@ WORKDIR /opt/app-root/src
 
 ENV JUPYTER_PRELOAD_REPOS="https://github.com/IntelAI/oneAPI-samples"
 ENV REPO_BRANCH="main"
+
 ENTRYPOINT ["bash", "-c", "/opt/app-root/builder/run"]

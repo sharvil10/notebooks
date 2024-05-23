@@ -6,8 +6,8 @@ resources:
   - pod.yaml
 images:
   - name: runtime-workbench
-    newName: quay.io/opendatahub/workbench-images
-    newTag: intel-runtime-tensorflow-ubi9-python-3.9
+    newName: image-registry.openshift-image-registry.svc:5000/redhat-ods-applications/jupyter-intel-tensorflow-notebook
+    newTag: runtime-test
 configMapGenerator:
   - name: req-config
     files:

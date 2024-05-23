@@ -22,7 +22,6 @@ COPY utils utils
 COPY --chown=1001:0 .patch_sklearn.py /opt/app-root/bin/.patch_sklearn.py
 ENV PYTHONSTARTUP="/opt/app-root/bin/.patch_sklearn.py"
 
-#Virtualenv creates a symlink of lib to lib64. That causes issues with importing ITEX since both locations will have ITEX library and it will conflict.
 RUN echo "Installing softwares and packages" && \
     micropipenv install && \
     rm -f ./Pipfile.lock && \

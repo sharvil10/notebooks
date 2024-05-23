@@ -9,5 +9,5 @@ resources:
   - statefulset.yaml
 images:
   - name: quay.io/opendatahub/workbench-images
-    newName: quay.io/opendatahub/workbench-images
-    newTag: jupyter-intel-ml-ubi9-python-3.9
+    newName: image-registry.openshift-image-registry.svc:5000/redhat-ods-applications/jupyter-intel-ml-notebook
+    newTag: jupyter-test
