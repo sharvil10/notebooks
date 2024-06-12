@@ -1,0 +1,12 @@
+name: hello-world
+on:
+  - workflow_dispath
+  - push:
+    branches:
+      develop
+jobs:
+  my-job:
+    runs-on: self-hosted
+    steps:
+      - name: my-step
+        run: echo "Hello World!"
