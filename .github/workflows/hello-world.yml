@@ -1,8 +1,8 @@
 name: hello-world
 on:
-  - push:
-      branches:
-        - develop
+  push:
+    branches:
+      - develop
 jobs:
   my-job:
     runs-on: self-hosted
