@@ -1,12 +1,32 @@
 name: hello-world
 on:
-  push:
-    branches:
-      - develop
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: 'Enter Git Ref:'
+        required: true
+        default: 'develop'
+        type: string
+      image-type:
+        description: 'Runtime/Jupyter'
+        required: true
+        options:
+        - runtime
+        - jupyter
+      framework:
+        description: 'Framework Name'
+        required: true
+        options:
+        - pytorch
+        - tensorflow
+        - ml
 jobs:
   my-job:
     runs-on: self-hosted
     steps:
+      - uses: actions/checkout@v4 # v4.1.7
+        with:
+          ref: ${{ inputs.ref }}
       - name: Log in and set context
         # In a real workflow, point the 'uses' to a tag.
         # uses: redhat-actions/oc-login@v1
@@ -19,7 +39,13 @@ jobs:
           insecure_skip_tls_verify: true
           # certificate_authority_data: ${{ secrets.CA_DATA }}
           namespace: ${{ env.TEST_NAMESPACE }}
-
-      - name: Test
+      - name: Build images
         run: |
-          oc api-resources
+          IMAGE_REGISTRY=$(oc get route default-route -n openshift-image-registry --template='{{ .spec.host }}')/redhat-ods-applications
+          IMAGE_TAG=${{ github.run_id }}
+          docker login -u $(oc whoami) -p $(oc whoami -t) ${IMAGE_REGISTRY}
+          make ${{ inputs.image-type }}-intel-${{ inputs.framework }}-ubi9-python-3.9
+          
+
+          
+  
